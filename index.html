@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gráfica – Vitrine de Produtos</title>
+<style>
+:root{
+  --cor:#e63946; --cor-esc:#b32430; --escuro:#1d1d27; --claro:#f6f6f9; --texto:#2b2b36; --borda:#e3e3ea;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--claro);color:var(--texto);line-height:1.5}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.container{max-width:1140px;margin:0 auto;padding:0 20px}
+
+/* Topo */
+header{background:#fff;border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:50}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font-size:1.5rem;font-weight:800;letter-spacing:-.5px}
+.logo span{color:var(--cor)}
+.nav-links{display:flex;gap:24px;font-weight:600;font-size:.95rem}
+.nav-links a:hover{color:var(--cor)}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,var(--escuro),#3a3a52);color:#fff;text-align:center;padding:80px 20px}
+.hero h1{font-size:clamp(1.9rem,5vw,3.2rem);line-height:1.15;margin-bottom:14px}
+.hero p{font-size:1.1rem;opacity:.85;max-width:620px;margin:0 auto 28px}
+.btn{display:inline-block;background:var(--cor);color:#fff;border:0;padding:14px 28px;border-radius:50px;font-weight:700;font-size:1rem;transition:.2s}
+.btn:hover{background:var(--cor-esc);transform:translateY(-2px)}
+.btn.sec{background:transparent;border:2px solid var(--borda);color:var(--texto)}
+.btn.sec:hover{background:var(--claro);transform:none}
+.btn.peq{padding:8px 16px;font-size:.85rem}
+.btn.perigo{background:#444}
+
+/* Produtos */
+section{padding:60px 0}
+.titulo-sec{text-align:center;margin-bottom:28px}
+.titulo-sec h2{font-size:2rem}
+.titulo-sec p{opacity:.7}
+.filtros{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:36px}
+.filtro{background:#fff;border:2px solid var(--borda);padding:9px 20px;border-radius:50px;font-weight:600;font-size:.92rem;transition:.2s}
+.filtro:hover{border-color:var(--cor)}
+.filtro.ativo{background:var(--cor);border-color:var(--cor);color:#fff}
+.grade{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--borda);transition:.25s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-5px);box-shadow:0 12px 28px rgba(0,0,0,.1)}
+.card .img{aspect-ratio:1/1;background:#eee}
+.card .img img{width:100%;height:100%;object-fit:cover;display:block}
+.card .info{padding:18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card .cat{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--cor);font-weight:700}
+.card h3{font-size:1.1rem}
+.card .preco{font-size:1.3rem;font-weight:800;margin-top:auto}
+.card .pedir{margin-top:10px;text-align:center}
+.vazio{grid-column:1/-1;text-align:center;opacity:.6;padding:40px}
+
+/* Sobre / Contato */
+.sobre{background:#fff}
+.sobre .container{max-width:760px;text-align:center}
+.sobre h2{margin-bottom:12px;font-size:2rem}
+footer{background:var(--escuro);color:#ccc;text-align:center;padding:28px 20px;font-size:.9rem}
+footer a{color:#fff;text-decoration:underline;opacity:.6;margin-left:8px}
+
+/* WhatsApp flutuante */
+.wpp{position:fixed;right:20px;bottom:20px;width:62px;height:62px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:90;transition:.2s}
+.wpp:hover{transform:scale(1.1)}
+.wpp svg{width:34px;height:34px;fill:#fff}
+
+/* Admin */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:100;overflow-y:auto;padding:20px}
+.overlay.aberto{display:block}
+.modal{background:#fff;max-width:900px;margin:20px auto;border-radius:16px;padding:26px}
+.modal.peq{max-width:380px;margin-top:15vh}
+.modal-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal h2{font-size:1.4rem}
+.fechar{background:none;border:0;font-size:1.8rem;line-height:1}
+label{display:block;font-weight:600;font-size:.85rem;margin:12px 0 4px}
+input[type=text],input[type=password],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--borda);border-radius:8px;font:inherit}
+textarea{min-height:70px;resize:vertical}
+.abas{display:flex;gap:8px;margin-bottom:18px;border-bottom:2px solid var(--borda)}
+.aba{background:none;border:0;padding:10px 16px;font-weight:700;border-bottom:3px solid transparent;margin-bottom:-2px}
+.aba.ativa{border-color:var(--cor);color:var(--cor)}
+.painel{display:none}.painel.ativo{display:block}
+.lista-adm{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.item-adm{display:flex;align-items:center;gap:12px;border:1px solid var(--borda);border-radius:10px;padding:10px}
+.item-adm img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+.item-adm .d{flex:1;min-width:0}
+.item-adm .d b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-adm .d small{opacity:.65}
+.form-prod{background:var(--claro);border-radius:12px;padding:16px;margin-top:14px}
+.form-prod h3{margin-bottom:4px}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prev{width:110px;height:110px;object-fit:cover;border-radius:10px;margin-top:8px;border:1px solid var(--borda)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.dica{font-size:.8rem;opacity:.65;margin-top:6px}
+.erro{color:#c00;font-size:.85rem;margin-top:8px;min-height:1em}
+
+/* Celular */
+@media(max-width:900px){.grade{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){
+  .grade{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hero{padding:56px 20px}
+  .linha2{grid-template-columns:1fr}
+  .modal{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="#topo" class="logo" id="logoTxt"></a>
+    <nav class="nav-links">
+      <a href="#produtos">Produtos</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#" id="linkWppTopo" target="_blank" rel="noopener">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="topo">
+  <h1 id="heroTitulo"></h1>
+  <p id="heroSub"></p>
+  <a href="#produtos" class="btn">Ver produtos</a>
+</div>
+
+<section id="produtos">
+  <div class="container">
+    <div class="titulo-sec">
+      <h2>Nossos Produtos</h2>
+      <p>Escolha uma categoria ou veja tudo</p>
+    </div>
+    <div class="filtros" id="filtros"></div>
+    <div class="grade" id="grade"></div>
+  </div>
+</section>
+
+<section class="sobre" id="sobre">
+  <div class="container">
+    <h2 id="sobreTitulo"></h2>
+    <p id="sobreTexto"></p>
+  </div>
+</section>
+
+<footer>
+  <span id="rodape"></span>
+  <a href="#" id="abrirAdm">Admin</a>
+</footer>
+
+<!-- Botão flutuante WhatsApp -->
+<a class="wpp" id="wppFlut" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16.003 3C9.375 3 4 8.373 4 15c0 2.36.69 4.56 1.88 6.42L4 29l7.77-1.84A11.94 11.94 0 0 0 16 27c6.627 0 12-5.373 12-12S22.63 3 16.003 3Zm0 21.8c-1.9 0-3.67-.55-5.16-1.5l-.37-.22-4.6 1.09 1.12-4.48-.24-.38A9.76 9.76 0 0 1 6.2 15c0-5.42 4.4-9.8 9.8-9.8 5.4 0 9.8 4.38 9.8 9.8 0 5.4-4.4 9.8-9.8 9.8Zm5.4-7.34c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.08 4.48.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
+</a>
+
+<!-- Login admin -->
+<div class="overlay" id="ovLogin">
+  <div class="modal peq">
+    <div class="modal-topo"><h2>Área do administrador</h2><button class="fechar" data-fechar="ovLogin">&times;</button></div>
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" placeholder="Digite a senha">
+    <div class="erro" id="erroSenha"></div>
+    <div class="acoes"><button class="btn" id="entrar">Entrar</button></div>
+    <p class="dica">Senha inicial: <b>admin123</b> (troque dentro do painel).</p>
+  </div>
+</div>
+
+<!-- Painel admin -->
+<div class="overlay" id="ovAdm">
+  <div class="modal">
+    <div class="modal-topo"><h2>Painel do administrador</h2><button class="fechar" data-fechar="ovAdm">&times;</button></div>
+
+    <div class="abas">
+      <button class="aba ativa" data-aba="pProdutos">Produtos</button>
+      <button class="aba" data-aba="pTextos">Textos do site</button>
+      <button class="aba" data-aba="pConfig">Configurações</button>
+    </div>
+
+    <!-- Produtos -->
+    <div class="painel ativo" id="pProdutos">
+      <button class="btn peq" id="novoProd">+ Novo produto</button>
+      <div class="lista-adm" id="listaAdm"></div>
+
+      <div class="form-prod" id="formProd" style="display:none">
+        <h3 id="formTitulo">Novo produto</h3>
+        <input type="hidden" id="fId">
+        <label for="fNome">Título</label>
+        <input type="text" id="fNome">
+        <div class="linha2">
+          <div><label for="fPreco">Preço (R$)</label><input type="number" id="fPreco" step="0.01" min="0"></div>
+          <div><label for="fCat">Categoria / tipo</label><input type="text" id="fCat" list="listaCats" placeholder="Ex.: Cartões"></div>
+        </div>
+        <datalist id="listaCats"></datalist>
+        <label for="fImg">Imagem do produto</label>
+        <input type="file" id="fImg" accept="image/*">
+        <img class="prev" id="fPrev" alt="" style="display:none">
+        <div class="acoes">
+          <button class="btn peq" id="salvarProd">Salvar produto</button>
+          <button class="btn sec peq" id="cancelarProd">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Textos -->
+    <div class="painel" id="pTextos">
+      <label for="tLogo">Nome da gráfica (logo)</label><input type="text" id="tLogo">
+      <label for="tHeroT">Título principal</label><input type="text" id="tHeroT">
+      <label for="tHeroS">Subtítulo</label><textarea id="tHeroS"></textarea>
+      <label for="tSobreT">Título da seção "Sobre"</label><input type="text" id="tSobreT">
+      <label for="tSobre">Texto da seção "Sobre"</label><textarea id="tSobre"></textarea>
+      <label for="tRodape">Texto do rodapé</label><input type="text" id="tRodape">
+      <div class="acoes"><button class="btn peq" id="salvarTextos">Salvar textos</button></div>
+    </div>
+
+    <!-- Config -->
+    <div class="painel" id="pConfig">
+      <label for="cWpp">Número do WhatsApp (com DDD, só números)</label>
+      <input type="text" id="cWpp" placeholder="5531999999999">
+      <p class="dica">Use o código do país: 55 + DDD + número.</p>
+      <label for="cMsg">Mensagem padrão do WhatsApp</label>
+      <input type="text" id="cMsg">
+      <label for="cSenha">Nova senha do admin (deixe vazio para manter)</label>
+      <input type="password" id="cSenha">
+      <div class="acoes">
+        <button class="btn peq" id="salvarConfig">Salvar configurações</button>
+        <button class="btn sec peq" id="restaurar">Restaurar dados de exemplo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Dados ---------- */
+const CHAVE = 'grafica_vitrine_v1';
+
+function placeholder(texto, cor){
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="${cor}"/><text x="300" y="320" font-family="Arial" font-size="42" font-weight="bold" fill="#fff" text-anchor="middle">${texto}</text></svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+function dadosPadrao(){
+  return {
+    config:{ whatsapp:'5531999999999', mensagem:'Olá! Vim pelo site e gostaria de um orçamento.', senha:'admin123' },
+    textos:{
+      logo:'Minha Gráfica',
+      heroTitulo:'Impressos de qualidade para o seu negócio',
+      heroSub:'Cartões, banners, adesivos e muito mais, com acabamento profissional e entrega rápida.',
+      sobreTitulo:'Sobre a gráfica',
+      sobreTexto:'Somos uma gráfica dedicada a transformar ideias em impressos. Fale com a gente pelo WhatsApp e peça seu orçamento.',
+      rodape:'© 2026 Minha Gráfica. Todos os direitos reservados.'
+    },
+    produtos:[
+      {id:1,nome:'Cartão de Visita 1000un',preco:89.9,categoria:'Cartões',img:placeholder('Cartão de Visita','#e63946')},
+      {id:2,nome:'Panfleto A5 1000un',preco:129.9,categoria:'Panfletos',img:placeholder('Panfleto A5','#2a9d8f')},
+      {id:3,nome:'Banner em Lona 1x0,6m',preco:79.9,categoria:'Banners',img:placeholder('Banner Lona','#264653')},
+      {id:4,nome:'Adesivo Vinil (m²)',preco:59.9,categoria:'Adesivos',img:placeholder('Adesivo Vinil','#f4a261')},
+      {id:5,nome:'Cartão Fidelidade 500un',preco:69.9,categoria:'Cartões',img:placeholder('Fidelidade','#6d597a')},
+      {id:6,nome:'Folder A4 Dobrado 500un',preco:219.9,categoria:'Panfletos',img:placeholder('Folder A4','#457b9d')}
+    ]
+  };
+}
+
+let dados;
+try{ dados = JSON.parse(localStorage.getItem(CHAVE)) || dadosPadrao(); }catch(e){ dados = dadosPadrao(); }
+function salvar(){
+  try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); return true; }
+  catch(e){ alert('Não foi possível salvar: espaço do navegador cheio. Use imagens menores ou remova produtos.'); return false; }
+}
+
+/* ---------- Utilidades ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const linkWpp = msg => `https://wa.me/${dados.config.whatsapp}?text=${encodeURIComponent(msg || dados.config.mensagem)}`;
+
+let filtroAtual = 'Todos';
+
+/* ---------- Site ---------- */
+function renderTextos(){
+  const t = dados.textos;
+  $('logoTxt').innerHTML = esc(t.logo).replace(/(\S+)$/, '<span>$1</span>');
+  $('heroTitulo').textContent = t.heroTitulo;
+  $('heroSub').textContent = t.heroSub;
+  $('sobreTitulo').textContent = t.sobreTitulo;
+  $('sobreTexto').textContent = t.sobreTexto;
+  $('rodape').textContent = t.rodape;
+  document.title = t.logo + ' – Vitrine de Produtos';
+  $('wppFlut').href = linkWpp();
+  $('linkWppTopo').href = linkWpp();
+}
+
+function categorias(){
+  return [...new Set(dados.produtos.map(p => p.categoria).filter(Boolean))];
+}
+
+function renderFiltros(){
+  const cats = ['Todos', ...categorias()];
+  if(!cats.includes(filtroAtual)) filtroAtual = 'Todos';
+  $('filtros').innerHTML = cats.map(c =>
+    `<button class="filtro ${c===filtroAtual?'ativo':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+}
+
+function renderGrade(){
+  const lista = dados.produtos.filter(p => filtroAtual==='Todos' || p.categoria===filtroAtual);
+  if(!lista.length){ $('grade').innerHTML = '<div class="vazio">Nenhum produto cadastrado.</div>'; return; }
+  $('grade').innerHTML = lista.map(p => `
+    <article class="card">
+      <div class="img"><img src="${p.img}" alt="${esc(p.nome)}" loading="lazy"></div>
+      <div class="info">
+        <span class="cat">${esc(p.categoria||'')}</span>
+        <h3>${esc(p.nome)}</h3>
+        <div class="preco">${brl(p.preco)}</div>
+        <a class="btn peq pedir" target="_blank" rel="noopener" href="${linkWpp('Olá! Tenho interesse em: '+p.nome)}">Pedir orçamento</a>
+      </div>
+    </article>`).join('');
+}
+
+function renderSite(){ renderTextos(); renderFiltros(); renderGrade(); }
+
+$('filtros').addEventListener('click', e => {
+  const b = e.target.closest('.filtro'); if(!b) return;
+  filtroAtual = b.dataset.cat; renderFiltros(); renderGrade();
+});
+
+/* ---------- Modais ---------- */
+const abrir = id => $(id).classList.add('aberto');
+const fechar = id => $(id).classList.remove('aberto');
+document.querySelectorAll('[data-fechar]').forEach(b => b.onclick = () => fechar(b.dataset.fechar));
+
+$('abrirAdm').onclick = e => { e.preventDefault(); $('senha').value=''; $('erroSenha').textContent=''; abrir('ovLogin'); $('senha').focus(); };
+function tentarEntrar(){
+  if($('senha').value === dados.config.senha){ fechar('ovLogin'); abrirPainel(); }
+  else $('erroSenha').textContent = 'Senha incorreta.';
+}
+$('entrar').onclick = tentarEntrar;
+$('senha').addEventListener('keydown', e => { if(e.key==='Enter') tentarEntrar(); });
+
+/* ---------- Painel ---------- */
+function abrirPainel(){
+  preencherTextos(); preencherConfig(); renderListaAdm(); esconderForm();
+  abrir('ovAdm');
+}
+document.querySelectorAll('.aba').forEach(a => a.onclick = () => {
+  document.querySelectorAll('.aba').forEach(x => x.classList.remove('ativa'));
+  document.querySelectorAll('.painel').forEach(x => x.classList.remove('ativo'));
+  a.classList.add('ativa'); $(a.dataset.aba).classList.add('ativo');
+});
+
+/* Produtos */
+let imgTemp = null;
+
+function renderListaAdm(){
+  $('listaAdm').innerHTML = dados.produtos.map(p => `
+    <div class="item-adm">
+      <img src="${p.img}" alt="">
+      <div class="d"><b>${esc(p.nome)}</b><small>${brl(p.preco)} · ${esc(p.categoria||'sem categoria')}</small></div>
+      <button class="btn sec peq" data-editar="${p.id}">Editar</button>
+      <button class="btn perigo peq" data-excluir="${p.id}">Excluir</button>
+    </div>`).join('') || '<p class="dica">Nenhum produto ainda.</p>';
+  $('listaCats').innerHTML = categorias().map(c => `<option value="${esc(c)}">`).join('');
+}
+
+function esconderForm(){ $('formProd').style.display='none'; imgTemp=null; }
+function mostrarForm(p){
+  $('formProd').style.display='block';
+  $('formTitulo').textContent = p ? 'Editar produto' : 'Novo produto';
+  $('fId').value = p ? p.id : '';
+  $('fNome').value = p ? p.nome : '';
+  $('fPreco').value = p ? p.preco : '';
+  $('fCat').value = p ? p.categoria : '';
+  $('fImg').value = '';
+  imgTemp = p ? p.img : null;
+  $('fPrev').style.display = imgTemp ? 'block' : 'none';
+  if(imgTemp) $('fPrev').src = imgTemp;
+  $('formProd').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('novoProd').onclick = () => mostrarForm(null);
+$('cancelarProd').onclick = esconderForm;
+
+$('listaAdm').addEventListener('click', e => {
+  const ed = e.target.closest('[data-editar]'), ex = e.target.closest('[data-excluir]');
+  if(ed) mostrarForm(dados.produtos.find(p => p.id == ed.dataset.editar));
+  if(ex && confirm('Excluir este produto?')){
+    dados.produtos = dados.produtos.filter(p => p.id != ex.dataset.excluir);
+    if(salvar()){ renderListaAdm(); renderSite(); }
+  }
+});
+
+/* Redimensiona a imagem para caber no armazenamento do navegador */
+$('fImg').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const lado = 800, c = document.createElement('canvas');
+      const esc_ = Math.min(1, lado / Math.max(im.width, im.height));
+      c.width = im.width * esc_; c.height = im.height * esc_;
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      imgTemp = c.toDataURL('image/jpeg', .82);
+      $('fPrev').src = imgTemp; $('fPrev').style.display = 'block';
+    };
+    im.src = r.result;
+  };
+  r.readAsDataURL(f);
+});
+
+$('salvarProd').onclick = () => {
+  const nome = $('fNome').value.trim();
+  const preco = parseFloat($('fPreco').value);
+  const cat = $('fCat').value.trim();
+  if(!nome || isNaN(preco)){ alert('Preencha o título e o preço.'); return; }
+  const id = $('fId').value;
+  const img = imgTemp || placeholder(nome.slice(0,18),'#888');
+  if(id){
+    const p = dados.produtos.find(x => x.id == id);
+    Object.assign(p, {nome, preco, categoria:cat, img});
+  } else {
+    dados.produtos.push({id:Date.now(), nome, preco, categoria:cat, img});
+  }
+  if(salvar()){ esconderForm(); renderListaAdm(); renderSite(); }
+};
+
+/* Textos */
+function preencherTextos(){
+  const t = dados.textos;
+  $('tLogo').value=t.logo; $('tHeroT').value=t.heroTitulo; $('tHeroS').value=t.heroSub;
+  $('tSobreT').value=t.sobreTitulo; $('tSobre').value=t.sobreTexto; $('tRodape').value=t.rodape;
+}
+$('salvarTextos').onclick = () => {
+  Object.assign(dados.textos, {
+    logo:$('tLogo').value, heroTitulo:$('tHeroT').value, heroSub:$('tHeroS').value,
+    sobreTitulo:$('tSobreT').value, sobreTexto:$('tSobre').value, rodape:$('tRodape').value
+  });
+  if(salvar()){ renderSite(); alert('Textos salvos!'); }
+};
+
+/* Config */
+function preencherConfig(){ $('cWpp').value=dados.config.whatsapp; $('cMsg').value=dados.config.mensagem; $('cSenha').value=''; }
+$('salvarConfig').onclick = () => {
+  dados.config.whatsapp = $('cWpp').value.replace(/\D/g,'');
+  dados.config.mensagem = $('cMsg').value;
+  if($('cSenha').value) dados.config.senha = $('cSenha').value;
+  if(salvar()){ renderSite(); alert('Configurações salvas!'); }
+};
+$('restaurar').onclick = () => {
+  if(confirm('Isso apaga seus produtos e textos atuais e volta aos exemplos. Continuar?')){
+    dados = dadosPadrao(); salvar(); preencherTextos(); preencherConfig(); renderListaAdm(); renderSite();
+  }
+};
+
+renderSite();
+</script>
+</body>
+</html>
